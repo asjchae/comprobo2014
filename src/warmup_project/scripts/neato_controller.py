@@ -9,10 +9,61 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import LaserScan
 
+
 class ObstacleAvoider():
 
     def __init__(self):
         rospy.init_node('obstacleavoider', anonymous = True)
+        self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+        self.sub = rospy.Subscriber('scan', LaserScan, self.obstacle_scan)
+        self.obstacle = 0
+
+    def obstacle_scan(self, msg):
+        obstacle_left = []
+        obstacle_right = []
+        
+
+        for i in range(45):
+            if msg.ranges[i] > 0 and msg.ranges[i] < 2:
+                obstacle_left.append(msg.ranges[i])
+
+        for i in range(45):
+            if msg.ranges[360-i] > 0 and msg.ranges[360-i] < 2:
+                obstacle_right.append(msg.ranges[i])
+
+        if len(obstacle_left) > len(obstacle_right):
+            self.obstacle = 1 # Turn right    
+
+        elif len(obstacle_left) < len(obstacle_right):
+            self.obstacle = 2 # Turn left
+
+        else:
+            self.obstacle = 0 # Go straight
+
+        # self.obstacle_distance = sum(check_left)/float(len(check_left))
+
+
+    def run():
+        avoid_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+        r = rospy.Rate(10) # 10hz
+
+        while not rospy.is_shutdown():
+            if self.obstacle == 0:
+                avoid_msg = Twist(Vector3(0.5, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+            elif self.obstacle == 1: # Turn right
+                avoid_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+            elif self.obstacle == 2: # Turn left
+                avoid_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+
+            self.pub.publish(avoid_msg)
+        r.sleep()
+
+
+
+class WallFollower():
+
+    def __init__(self):
+        rospy.init_node('wallfollower', anonymous = True)
         self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
         self.sub = rospy.Subscriber('scan', LaserScan, self.scan_around)
         self.quadrant = 0
@@ -84,7 +135,7 @@ class ObstacleAvoider():
 
 
     def run(self):
-        velocity_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+        follow_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
         r = rospy.Rate(10) # 10hz
         while not rospy.is_shutdown():
 
@@ -92,17 +143,17 @@ class ObstacleAvoider():
             
 
             if self.front_distance > 1.0:
-                velocity_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Approach wall
+                follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Approach wall
             elif self.front_distance < 1.0:
-                velocity_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0)) # Stop
-                velocity_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
+                follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0)) # Stop
+                follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
                 while self.left_distance != 1.0 or self.right_distance != 1.0:
-                    velocity_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
+                    follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
                 if self.left_distance == 1.0 or self.right_distance == 1.0:
-                    velocity_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Go straight
+                    follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Go straight
 
 
-            self.pub.publish(velocity_msg)
+            self.pub.publish(follow_msg)
             
             r.sleep()
 
