@@ -43,7 +43,7 @@ class ObstacleAvoider():
         # self.obstacle_distance = sum(check_left)/float(len(check_left))
 
 
-    def run():
+    def run(self):
         avoid_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
         r = rospy.Rate(10) # 10hz
 
@@ -122,7 +122,7 @@ class WallFollower():
         if len(check_right) > 45:
             print "There's a something on the right"
             self.right_distance = sum(check_right)/float(len(check_right))
-            self.quadrant = 
+            self.quadrant = 3
 
         # Check rear
         for i in range(90):
@@ -142,15 +142,15 @@ class WallFollower():
             # MVP: Robot is placed in front of wall, facing wall. Robot approaches wall, turns and follows it.
             
 
-            if self.front_distance > 1.0:
-                follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Approach wall
-            elif self.front_distance < 1.0:
-                follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0)) # Stop
-                follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
-                while self.left_distance != 1.0 or self.right_distance != 1.0:
-                    follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
-                if self.left_distance == 1.0 or self.right_distance == 1.0:
-                    follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Go straight
+            # if self.front_distance > 1.0:
+            #     follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Approach wall
+            # elif self.front_distance < 1.0:
+            #     follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0)) # Stop
+            #     follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
+            #     while self.left_distance != 1.0 or self.right_distance != 1.0:
+            #         follow_msg = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.1)) # Rotate a little bit
+            #     if self.left_distance == 1.0 or self.right_distance == 1.0:
+            #         follow_msg = Twist(Vector3(0.5,0.0,0.0), Vector3(0.0,0.0,0.0)) # Go straight
 
 
             self.pub.publish(follow_msg)
@@ -159,7 +159,7 @@ class WallFollower():
 
 if __name__ == '__main__':
     try:
-        node = ObstacleAvoider()
+        node = WallFollower()
         node.run()
     except rospy.ROSInterruptException: pass
 
