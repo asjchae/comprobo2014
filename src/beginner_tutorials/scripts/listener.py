@@ -33,46 +33,28 @@
 #
 # Revision $Id$
 
-## Simple talker demo that published std_msgs/Strings messages
+## Simple talker demo that listens to std_msgs/Strings published 
 ## to the 'chatter' topic
 
 import rospy
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist, Vector3
-from sensor_msgs.msg import LaserScan
 
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id()+"I heard %s",data.data)
+    
+def listener():
 
-class WallApproacher:
+    # in ROS, nodes are unique named. If two nodes with the same
+    # node are launched, the previous one is kicked off. The 
+    # anonymous=True flag means that rospy will choose a unique
+    # name for our 'talker' node so that multiple talkers can
+    # run simultaenously.
+    rospy.init_node('listener', anonymous=True)
 
-    def __init__(self):
-        rospy.init_node('wallfollower', anonymous = True)
-        self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-        self.sub = rospy.Subscriber('scan', LaserScan, self.scan_received)
-        self.mean_distance = -1.0
+    rospy.Subscriber("chatter", String, callback)
 
-
-
-    def scan_received(self, msg):
-        """ Processes data from the laser scanner, msg is of type sensor_msgs/LaserScan """
-        valid_ranges = []
-        for i in range(5):
-            if msg.ranges[i] > 0 and msg.ranges[i] < 8:
-                valid_ranges.append(msg.ranges[i])
-        if len(valid_ranges) > 0:
-            self.mean_distance = sum(valid_ranges)/float(len(valid_ranges))
-        else:
-            self.mean_distance = -1.0
-
-    def run(self):
-        r = rospy.Rate(10) # 10hz
-        while not rospy.is_shutdown():
-            if self.mean_distance != -1.0:
-                velocity_msg = Twist(Vector3(0.2*(mean_distance - 1.0), 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
-            self.pub.publish(velocity_msg)
-            r.sleep()
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
         
 if __name__ == '__main__':
-    try:
-        node = WallApproacher()
-        node.run()
-    except rospy.ROSInterruptException: pass
+    listener()
