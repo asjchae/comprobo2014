@@ -2,15 +2,13 @@ For the warm up project, I implemented wall following and obstacle avoiding.
 
 For wall following, I had the Neato approach the wall, then orient itself so that the wall was on its right. It would then continue straight along the wall. If it strayed too far from the wall on the right, it would turn towards the wall again and reorient itself and continue along the wall.
 
-For obstacle avoidance, I had the Neato detect when it was coming up to an obstacle, and it would turn to the left to go around it. Once it detected that the obstacle was on its right and that there were no more obstacles ahead, the Neato would straighten out its path and continue on.
+For obstacle avoidance, I had the Neato detect when it was coming up to an obstacle, then turn to the left to go around it. Once it detected that the obstacle was on its right and that there were no more obstacles ahead, the Neato would straighten out its path and continue on.
 
-I wasn't sure how to combine the two classes for the finite state controller, but then I realized that my obstacle avoidance script, while not as elegant as my wall following script, allowed the Neato to follow along the wall and then go around an obstacle placed against the wall before returning to the wall to continue along it. As I have spent many, many hours on implementing the two behaviors separately, I decided this was good enough.
+I wasn't sure how to combine the two classes for the finite state controller, but then I realized that my obstacle avoidance script, while not as elegant as my wall following script, allowed the Neato to follow along the wall and then go around an obstacle placed against the wall before returning to the wall to continue along it. As I had spent many, many hours on implementing the two behaviors separately, I decided this was good enough and called it a day.
 
-I built a class for each behavior and put the files inside a ROS package.
-
-There were many challenges. Much had to do with learning how to communicate with the Neato using Python. There were also times when the scans would just stop returning data, and working to determine angles from the LaserScan data was difficult as well. Overall, thinking like a programmer for a robot is harder than I expedcted.
+There were many challenges. Much had to do with learning how to communicate with the Neato using Python. There were also times when the scans would just stop returning data, which made it harder to determine distances and angles from the LaserScan information. Overall, thinking like a programmer for a robot was harder than I expected, and I had to settle for an MVP that was more M than I had hoped.
 
 
-If I had more time, I would improve my obstacle avoidance behavior by allowing the Neato to choose whether it should avoid the obstacle by going to the left or the right based on more LaserScan readings.
+If I had more time, I would make my finite state controller actually use the code I wrote for my wall following behavior. I would also want to improve my obstacle avoidance behavior by allowing the Neato to choose whether it should avoid the obstacle by going to the left or the right based on more LaserScan readings. The wall following behavior only works when the wall doesn't end or bend, and the obstacle avoiding was only tested against a trash can, so there may be other limitations that I am unaware of that could be improved upon.
 
-I found that it was better to break down the behaviors into pieces rather than trying to build every component at once. It made for easier debugging and also helped with planning next steps, instead of sitting down and trying to imagine how the entire behavior should be implemented at once.
+I think I learned more about controlling robots through this warm up project. I'm excellent at using teleop to drive the Neatos now. I found that it was better to break down the behaviors into small, sizable pieces rather than trying to build every component at once. It made for easier debugging and also helped with planning, which made it less stressful and more logical than sitting down and trying to imagine how the entire behavior should be implemented at once.
