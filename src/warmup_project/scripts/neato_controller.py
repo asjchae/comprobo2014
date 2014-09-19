@@ -56,6 +56,8 @@ class ObstacleAvoider():
                 avoid_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
 
             self.pub.publish(avoid_msg)
+        if rospy.is_shutdown():
+            print "Rospy shutdown"
         r.sleep()
 
 
