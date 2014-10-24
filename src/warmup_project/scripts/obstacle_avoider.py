@@ -41,11 +41,11 @@ class ObstacleAvoider():
     def run(self):
         
         r = rospy.Rate(10) # 10hz
-        obstacle_msg = Twist(Vector3(0.1, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
+        obstacle_msg = Twist(Vector3(0.2, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
 
         while not rospy.is_shutdown():
             if (self.front_distance < .8) and (self.front_distance > 0):
-                obstacle_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.1))
+                obstacle_msg = Twist(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.2))
             else:
                 obstacle_msg = Twist(Vector3(0.2, 0.0, 0.0), Vector3(0.0, 0.0, 0.0))
                 if (self.right_distance > .3) and (self.right_distance < .8) and (self.front_distance > 1):

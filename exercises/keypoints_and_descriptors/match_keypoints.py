@@ -76,7 +76,7 @@ def mouse_event(event,x,y,flag,im):
 
 if __name__ == '__main__':
 	# descriptor can be: SIFT, SURF, BRIEF, BRISK, ORB, FREAK
-	matcher = KeyPointMatcherDemo('frame0000.jpg','frame0001.jpg','SIFT')
+	matcher = KeyPointMatcherDemo('frame0002.jpg','frame0003.jpg','SIFT') # 10 and 73 works well with minions
 
 	cv2.namedWindow('UI')
 	cv2.createTrackbar('Corner Threshold', 'UI', 0, 100, set_corner_threshold)
